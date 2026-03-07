@@ -1,127 +1,128 @@
 # 2PC Bank Transfer System
-Hệ thống chuyển tiền ngân hàng với giao thức Two-Phase Commit
+
+Hệ thống demo mô phỏng **chuyển tiền giữa hai ngân hàng** sử dụng **Two-Phase Commit (2PC)** để đảm bảo tính nhất quán phân tán.
+
+---
 
 ## 🏗️ Kiến trúc hệ thống
 
+- **Coordinator** (port 5000): Orchestrator điều phối 2PC
+- **Bank A** (port 5001): SQL Server (db `bank_a`)
+- **Bank B** (port 5002): PostgreSQL (db `bank_b`)
+
 ```
-┌─────────────────┐    HTTP/REST    ┌─────────────────┐
-│   Coordinator   │◄──────────────►│     Bank A      │
-│    (Port 5000)  │                │  SQL Server     │
-│                 │                │   (Port 5001)   │
-└─────────────────┘                └─────────────────┘
-         │
-         │
-         ▼
-┌─────────────────┐
-│     Bank B      │
-│  PostgreSQL     │
-│   (Port 5002)   │
-└─────────────────┘
+[Client] → [Coordinator] → [Bank A] / [Bank B]
 ```
 
-## 📋 Tính năng
+---
 
-- **Two-Phase Commit Protocol**: Đảm bảo tính nhất quán phân tán
-- **Microservices Architecture**: Mỗi bank là một service độc lập
-- **Multi-Database**: Bank A dùng SQL Server, Bank B dùng PostgreSQL
-- **REST API**: Giao tiếp qua HTTP endpoints
-- **Fault Tolerance**: Xử lý lỗi và rollback tự động
+## ✅ Tính năng chính
 
-## 🚀 Cài đặt và chạy
+- Chuyển tiền giữa 2 ngân hàng với **Two-Phase Commit**
+- Đăng ký / đăng nhập / logout
+- Xem số dư, rút tiền, chuyển nội bộ
+- Trạng thái giao dịch theo `txn_id`
+- Health check cho từng service
 
-### 1. Cài đặt dependencies
+---
+
+## 🚀 Quickstart
+
+### 1) Cài dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Chuẩn bị databases
+### 2) Chạy dịch vụ (3 terminal)
 ```bash
-# PostgreSQL cho Bank B
-sudo systemctl start postgresql
-sudo -u postgres createdb bank_b
-
-# SQL Server cho Bank A (Docker)
-docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=Hao@DBMS' \
-  -p 1433:1433 --name sqlserver \
-  -d mcr.microsoft.com/mssql/server:2022-latest
-
-# Tạo database bank_a trong SQL Server
-sqlcmd -S localhost -U sa -P 'Hao@DBMS' -Q "CREATE DATABASE bank_a"
+python3 coordinator.py
+python3 bank_a.py
+python3 bank_b.py
 ```
 
-### 3. Chạy hệ thống
-```bash
-# Chạy tất cả services cùng lúc
-./run_system.sh
+> Hoặc chạy nhanh: `./run_system.sh`
 
-# Hoặc chạy từng service riêng biệt:
-# Terminal 1: python3 coordinator.py
-# Terminal 2: python3 bank_a.py
-# Terminal 3: python3 bank_b.py
-```
-
-### 4. Test hệ thống
-```bash
-python3 test_flask_system.py
-```
+---
 
 ## 📡 API Endpoints
 
-### Coordinator (Port 5000)
-- `POST /transfer` - Thực hiện giao dịch chuyển tiền
-- `GET /status/<txn_id>` - Kiểm tra trạng thái giao dịch
-- `GET /health` - Health check
+### Coordinator (port 5000)
+- `POST /transfer` – khởi tạo chuyển tiền (2PC)
+- `GET /status/<txn_id>` – trạng thái giao dịch
+- `GET /health` – health check
 
-### Bank A - SQL Server (Port 5001)
-- `POST /prepare` - Phase 1: Prepare
-- `POST /commit` - Phase 2: Commit
-- `POST /rollback` - Rollback transaction
-- `GET /balance` - Xem số dư
-- `GET /health` - Health check
+### Bank A (port 5001) / Bank B (port 5002)
+- `POST /register` – đăng ký tài khoản
+- `POST /login` – đăng nhập
+- `POST /logout` – đăng xuất
+- `GET /accounts/<account_number>/info` – thông tin tài khoản
+- `GET /accounts/<account_number>/balance` – số dư
+- `POST /withdraw` – rút tiền
+- `POST /internal/transfer` – chuyển nội bộ (cùng bank)
+- `POST /prepare` – 2PC prepare
+- `POST /commit` – 2PC commit
+- `POST /rollback` – 2PC rollback
+- `GET /health` – health check
 
-### Bank B - PostgreSQL (Port 5002)
-- `POST /prepare` - Phase 1: Prepare
-- `POST /commit` - Phase 2: Commit
-- `POST /rollback` - Rollback transaction
-- `GET /balance` - Xem số dư
-- `GET /health` - Health check
+---
 
-## 🧪 Test giao dịch
+## 🧪 Ví dụ curl
 
+### Đăng ký + đăng nhập
 ```bash
-# Chuyển 100 từ Bank A sang Bank B
-curl -X POST http://localhost:5000/transfer \
+curl -X POST http://localhost:5001/register \
   -H "Content-Type: application/json" \
-  -d '{"from_account": "A1001", "to_account": "B1001", "amount": 100}'
+  -d '{"username":"alice","password":"alice123","account_number":"A1001","initial_balance":1000}'
 
-# Kiểm tra kết quả
-curl http://localhost:5000/status/txn_001
-curl http://localhost:5001/balance
-curl http://localhost:5002/balance
+curl -X POST http://localhost:5001/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"alice","password":"alice123"}'
 ```
 
-## 📁 Cấu trúc file
+### Xem số dư
+```bash
+curl http://localhost:5001/accounts/A1001/balance
+```
+
+### Chuyển nội bộ (Bank A)
+```bash
+curl -X POST http://localhost:5001/internal/transfer \
+  -H "Content-Type: application/json" \
+  -d '{"from_account":"A1001","to_account":"A1002","amount":100}'
+```
+
+### Chuyển xuyên ngân hàng (2PC)
+```bash
+curl -X POST http://localhost:5000/transfer \
+  -H "Content-Type: application/json" \
+  -d '{"from_account":"A1001","to_account":"B1001","amount":100}'
+```
+
+### Kiểm tra trạng thái giao dịch
+```bash
+curl http://localhost:5000/status/<txn_id>
+```
+
+---
+
+## 📂 Cấu trúc project
 
 ```
 2PC-Bank-Transfer/
-├── coordinator.py      # Coordinator service
-├── bank_a.py          # Bank A (SQL Server)
-├── bank_b.py          # Bank B (PostgreSQL)
-├── logger.py          # Logging utility
-├── requirements.txt   # Python dependencies
-├── SETUP.md          # Chi tiết setup
-├── QUICKSTART.md     # Hướng dẫn nhanh
-├── run_system.sh     # Script chạy hệ thống
-└── test_flask_system.py # Test script
+├── coordinator.py        # Coordinator service
+├── bank_a.py            # Bank A (SQL Server)
+├── bank_b.py            # Bank B (PostgreSQL)
+├── logger.py            # Logging
+├── requirements.txt     # Dependencies
+├── run_system.sh        # Chạy nhanh 3 services
+├── test_flask_system.py # Test end-to-end
+├── SETUP.md             # Hướng dẫn cài đặt chi tiết
+└── README.md            # Tài liệu này
 ```
 
-## 🔧 Cấu hình
+---
 
-- **Coordinator**: Port 5000
-- **Bank A**: Port 5001, SQL Server
-- **Bank B**: Port 5002, PostgreSQL
-- **Database**: Tự động tạo bảng khi khởi động
+## 🛠️ Lưu ý
 
-## 🐛 Troubleshooting
-
-Xem file `SETUP.md` để biết chi tiết troubleshooting và cách xử lý lỗi thường gặp.
+- Bank A/B tự tạo schema khi khởi động nếu thiếu.
+- Nếu coordinator tắt giữa chừng, giao dịch có thể ở trạng thái pending; tra cứu với `/status/<txn_id>`.
