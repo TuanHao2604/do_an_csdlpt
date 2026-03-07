@@ -1,0 +1,18 @@
+"""
+Requirements for 2PC Bank Transfer with Flask Services
+"""
+
+# Web Framework
+Flask==2.3.3
+
+# HTTP requests
+requests==2.31.0
+
+# PostgreSQL
+psycopg2-binary==2.9.9
+
+# SQL Server
+pyodbc==4.0.39
+
+# MySQL (optional)
+PyMySQL==1.1.0

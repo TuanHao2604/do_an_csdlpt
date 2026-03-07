@@ -1,0 +1,56 @@
+2026-03-06 05:19:05 - coordinator - INFO - Starting 2PC Coordinator on port 5000
+2026-03-06 05:19:06 - coordinator - INFO - Starting 2PC Coordinator on port 5000
+2026-03-06 05:19:18 - coordinator - INFO - Starting 2PC transaction: f09e46d9-01b1-4825-bc54-0e7571315a06, amount: 50
+2026-03-06 05:19:18 - coordinator - INFO - Phase 1: Prepare
+2026-03-06 05:19:18 - coordinator - INFO - Both banks prepared successfully
+2026-03-06 05:19:18 - coordinator - INFO - Phase 2: Commit
+2026-03-06 05:19:45 - coordinator - INFO - Starting 2PC Coordinator on port 5000
+2026-03-06 05:19:45 - coordinator - INFO - Starting 2PC Coordinator on port 5000
+2026-03-06 05:20:03 - coordinator - INFO - Starting 2PC transaction: c9a73661-e7da-4034-aac8-ef8f6e74af60, amount: 50
+2026-03-06 05:20:03 - coordinator - INFO - Phase 1: Prepare
+2026-03-06 05:20:03 - coordinator - INFO - Both banks prepared successfully
+2026-03-06 05:20:03 - coordinator - INFO - Phase 2: Commit
+2026-03-06 05:20:18 - coordinator - INFO - Transaction c9a73661-e7da-4034-aac8-ef8f6e74af60 committed successfully
+2026-03-06 05:21:06 - coordinator - INFO - Starting 2PC transaction: 500c579c-9b2b-411c-9969-3304bc965e2f, amount: 50
+2026-03-06 05:21:06 - coordinator - INFO - Phase 1: Prepare
+2026-03-06 05:21:06 - coordinator - INFO - Both banks prepared successfully
+2026-03-06 05:21:06 - coordinator - INFO - Phase 2: Commit
+2026-03-06 05:21:32 - coordinator - INFO - Starting 2PC Coordinator on port 5000
+2026-03-06 05:21:32 - coordinator - INFO - Starting 2PC Coordinator on port 5000
+2026-03-06 05:23:14 - coordinator - INFO - Starting 2PC Coordinator on port 5000
+2026-03-06 05:23:28 - coordinator - INFO - Starting 2PC Coordinator on port 5000
+2026-03-06 05:31:02 - coordinator - INFO - Starting 2PC Coordinator on port 5000
+2026-03-06 05:31:41 - coordinator - INFO - Starting 2PC Coordinator on port 5000
+2026-03-06 05:33:27 - coordinator - INFO - Starting 2PC Coordinator on port 5000
+2026-03-06 05:33:27 - coordinator - INFO - Starting 2PC Coordinator on port 5000
+2026-03-06 05:33:53 - coordinator - INFO - Starting 2PC transaction: 2caf508c-619e-45dc-8e0a-7d906b5683a5, amount: 1
+2026-03-06 05:33:53 - coordinator - INFO - Phase 1: Prepare
+2026-03-06 05:33:53 - coordinator - INFO - Both banks prepared successfully
+2026-03-06 05:33:53 - coordinator - INFO - Phase 2: Commit
+2026-03-06 05:34:54 - coordinator - INFO - Starting 2PC Coordinator on port 5000
+2026-03-06 05:34:54 - coordinator - INFO - Starting 2PC Coordinator on port 5000
+2026-03-06 05:36:19 - coordinator - INFO - Starting 2PC Coordinator on port 5000
+2026-03-06 05:37:36 - coordinator - INFO - Starting 2PC transaction: 346d20ff-7afc-49e7-aaa7-0121e8062693, amount: 1
+2026-03-06 05:37:36 - coordinator - INFO - Phase 1: Prepare
+2026-03-06 05:37:36 - coordinator - INFO - Both banks prepared successfully
+2026-03-06 05:37:36 - coordinator - INFO - Phase 2: Commit
+2026-03-06 05:38:04 - coordinator - INFO - Starting 2PC Coordinator on port 5000
+2026-03-06 05:38:04 - coordinator - INFO - Starting 2PC Coordinator on port 5000
+2026-03-06 05:42:32 - coordinator - INFO - Starting 2PC Coordinator on port 5000
+2026-03-06 05:43:29 - coordinator - INFO - Starting 2PC Coordinator on port 5000
+2026-03-06 05:44:15 - coordinator - INFO - Starting 2PC Coordinator on port 5000
+2026-03-06 05:45:24 - coordinator - INFO - Starting 2PC Coordinator on port 5000
+2026-03-06 05:46:58 - coordinator - INFO - Starting 2PC Coordinator on port 5000
+2026-03-06 05:46:58 - coordinator - INFO - Starting 2PC Coordinator on port 5000
+2026-03-06 05:47:26 - coordinator - INFO - Starting 2PC transaction: bf8990b1-4afa-46bb-a0ab-5b8e7e7f302d, amount: 1
+2026-03-06 05:47:26 - coordinator - INFO - Phase 1: Prepare
+2026-03-06 05:47:26 - coordinator - INFO - Both banks prepared successfully
+2026-03-06 05:47:26 - coordinator - INFO - Phase 2: Commit
+2026-03-06 05:47:57 - coordinator - INFO - Starting 2PC Coordinator on port 5000
+2026-03-06 05:47:58 - coordinator - INFO - Starting 2PC Coordinator on port 5000
+2026-03-06 05:49:03 - coordinator - INFO - Starting 2PC transaction: 4e755f08-0d9f-4ba7-b101-f18337a39450, amount: 1
+2026-03-06 05:49:03 - coordinator - INFO - Phase 1: Prepare
+2026-03-06 05:49:03 - coordinator - INFO - Both banks prepared successfully
+2026-03-06 05:49:03 - coordinator - INFO - Phase 2: Commit
+2026-03-06 05:49:22 - coordinator - INFO - Starting 2PC Coordinator on port 5000
+2026-03-06 05:49:23 - coordinator - INFO - Starting 2PC Coordinator on port 5000

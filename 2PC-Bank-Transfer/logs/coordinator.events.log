@@ -1,0 +1,178 @@
+{"txn_id": "test123", "action": "start", "timestamp": 1772749031.8283203}
+{"txn_id": "f09e46d9-01b1-4825-bc54-0e7571315a06", "action": "start", "amount": 50, "timestamp": 1772749158.9254384}
+{"txn_id": "f09e46d9-01b1-4825-bc54-0e7571315a06", "action": "prepared", "bank": "A", "detail": {"status": "ready"}}
+{"txn_id": "f09e46d9-01b1-4825-bc54-0e7571315a06", "action": "prepared", "bank": "B", "detail": {"status": "ready"}}
+{"txn_id": "c9a73661-e7da-4034-aac8-ef8f6e74af60", "action": "start", "amount": 50, "timestamp": 1772749203.6128385}
+{"txn_id": "c9a73661-e7da-4034-aac8-ef8f6e74af60", "action": "prepared", "bank": "A", "detail": {"status": "ready"}}
+{"txn_id": "c9a73661-e7da-4034-aac8-ef8f6e74af60", "action": "prepared", "bank": "B", "detail": {"status": "ready"}}
+{"txn_id": "c9a73661-e7da-4034-aac8-ef8f6e74af60", "state": "GLOBAL_COMMIT"}
+{"txn_id": "c9a73661-e7da-4034-aac8-ef8f6e74af60", "action": "recovery_commit_sent"}
+{"txn_id": "500c579c-9b2b-411c-9969-3304bc965e2f", "action": "start", "amount": 50, "timestamp": 1772749266.6460059}
+{"txn_id": "500c579c-9b2b-411c-9969-3304bc965e2f", "action": "prepared", "bank": "A", "detail": {"status": "ready"}}
+{"txn_id": "500c579c-9b2b-411c-9969-3304bc965e2f", "action": "prepared", "bank": "B", "detail": {"status": "ready"}}
+{"txn_id": "c9a73661-e7da-4034-aac8-ef8f6e74af60", "action": "recovery_commit_sent"}
+{"txn_id": "c9a73661-e7da-4034-aac8-ef8f6e74af60", "action": "recovery_commit_sent"}
+{"txn_id": "f09e46d9-01b1-4825-bc54-0e7571315a06", "state": "GLOBAL_ABORT", "reason": "recovery_safe_abort"}
+{"txn_id": "f09e46d9-01b1-4825-bc54-0e7571315a06", "action": "recovery_rollback_failed", "error": "HTTPConnectionPool(host='localhost', port=5001): Max retries exceeded with url: /rollback (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7e44fc1f41a0>: Failed to establish a new connection: [Errno 111] Connection refused'))"}
+{"txn_id": "c9a73661-e7da-4034-aac8-ef8f6e74af60", "action": "recovery_commit_failed", "error": "HTTPConnectionPool(host='localhost', port=5001): Max retries exceeded with url: /commit (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7e44fc1e4f50>: Failed to establish a new connection: [Errno 111] Connection refused'))"}
+{"txn_id": "500c579c-9b2b-411c-9969-3304bc965e2f", "state": "GLOBAL_ABORT", "reason": "recovery_safe_abort"}
+{"txn_id": "500c579c-9b2b-411c-9969-3304bc965e2f", "action": "recovery_rollback_failed", "error": "HTTPConnectionPool(host='localhost', port=5001): Max retries exceeded with url: /rollback (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7e44fc1e5810>: Failed to establish a new connection: [Errno 111] Connection refused'))"}
+{"txn_id": "f09e46d9-01b1-4825-bc54-0e7571315a06", "action": "recovery_rollback_failed", "error": "HTTPConnectionPool(host='localhost', port=5001): Max retries exceeded with url: /rollback (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x77bd90ca41a0>: Failed to establish a new connection: [Errno 111] Connection refused'))"}
+{"txn_id": "c9a73661-e7da-4034-aac8-ef8f6e74af60", "action": "recovery_commit_failed", "error": "HTTPConnectionPool(host='localhost', port=5001): Max retries exceeded with url: /commit (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x77bd90c94f50>: Failed to establish a new connection: [Errno 111] Connection refused'))"}
+{"txn_id": "500c579c-9b2b-411c-9969-3304bc965e2f", "action": "recovery_rollback_failed", "error": "HTTPConnectionPool(host='localhost', port=5001): Max retries exceeded with url: /rollback (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x77bd90c95810>: Failed to establish a new connection: [Errno 111] Connection refused'))"}
+{"txn_id": "f09e46d9-01b1-4825-bc54-0e7571315a06", "action": "recovery_rollback_failed", "error": "HTTPConnectionPool(host='localhost', port=5001): Max retries exceeded with url: /rollback (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7e44fc20b6f0>: Failed to establish a new connection: [Errno 111] Connection refused'))"}
+{"txn_id": "c9a73661-e7da-4034-aac8-ef8f6e74af60", "action": "recovery_commit_failed", "error": "HTTPConnectionPool(host='localhost', port=5001): Max retries exceeded with url: /commit (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7e44fc20be10>: Failed to establish a new connection: [Errno 111] Connection refused'))"}
+{"txn_id": "500c579c-9b2b-411c-9969-3304bc965e2f", "action": "recovery_rollback_failed", "error": "HTTPConnectionPool(host='localhost', port=5001): Max retries exceeded with url: /rollback (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7e44fc073bf0>: Failed to establish a new connection: [Errno 111] Connection refused'))"}
+{"txn_id": "f09e46d9-01b1-4825-bc54-0e7571315a06", "action": "recovery_rollback_sent"}
+{"txn_id": "c9a73661-e7da-4034-aac8-ef8f6e74af60", "action": "recovery_commit_sent"}
+{"txn_id": "500c579c-9b2b-411c-9969-3304bc965e2f", "action": "recovery_rollback_sent"}
+{"txn_id": "f09e46d9-01b1-4825-bc54-0e7571315a06", "action": "recovery_rollback_sent"}
+{"txn_id": "c9a73661-e7da-4034-aac8-ef8f6e74af60", "action": "recovery_commit_sent"}
+{"txn_id": "500c579c-9b2b-411c-9969-3304bc965e2f", "action": "recovery_rollback_sent"}
+{"txn_id": "2caf508c-619e-45dc-8e0a-7d906b5683a5", "action": "start", "amount": 1, "timestamp": 1772750033.5975573}
+{"txn_id": "2caf508c-619e-45dc-8e0a-7d906b5683a5", "action": "prepared", "bank": "A", "detail": {"status": "ready"}}
+{"txn_id": "2caf508c-619e-45dc-8e0a-7d906b5683a5", "action": "prepared", "bank": "B", "detail": {"status": "ready"}}
+{"txn_id": "f09e46d9-01b1-4825-bc54-0e7571315a06", "action": "recovery_rollback_sent"}
+{"txn_id": "c9a73661-e7da-4034-aac8-ef8f6e74af60", "action": "recovery_commit_sent"}
+{"txn_id": "500c579c-9b2b-411c-9969-3304bc965e2f", "action": "recovery_rollback_sent"}
+{"txn_id": "2caf508c-619e-45dc-8e0a-7d906b5683a5", "state": "GLOBAL_ABORT", "reason": "recovery_safe_abort"}
+{"txn_id": "2caf508c-619e-45dc-8e0a-7d906b5683a5", "action": "recovery_rollback_sent"}
+{"txn_id": "f09e46d9-01b1-4825-bc54-0e7571315a06", "action": "recovery_rollback_sent"}
+{"txn_id": "c9a73661-e7da-4034-aac8-ef8f6e74af60", "action": "recovery_commit_sent"}
+{"txn_id": "500c579c-9b2b-411c-9969-3304bc965e2f", "action": "recovery_rollback_sent"}
+{"txn_id": "2caf508c-619e-45dc-8e0a-7d906b5683a5", "action": "recovery_rollback_sent"}
+{"txn_id": "f09e46d9-01b1-4825-bc54-0e7571315a06", "action": "recovery_rollback_sent"}
+{"txn_id": "c9a73661-e7da-4034-aac8-ef8f6e74af60", "action": "recovery_commit_sent"}
+{"txn_id": "500c579c-9b2b-411c-9969-3304bc965e2f", "action": "recovery_rollback_sent"}
+{"txn_id": "2caf508c-619e-45dc-8e0a-7d906b5683a5", "action": "recovery_rol1back_sent"}
+{"txn_id": "f09e46d9-01b1-4825-bc54-0e7571315a06", "action": "recovery_rollback_sent"}
+{"txn_id": "c9a73661-e7da-4034-aac8-ef8f6e74af60", "action": "recovery_commit_sent"}
+{"txn_id": "500c579c-9b2b-411c-9969-3304bc965e2f", "action": "recovery_rollback_sent"}
+{"txn_id": "2caf508c-619e-45dc-8e0a-7d906b5683a5", "action": "recovery_rollback_sent"}
+{"txn_id": "f09e46d9-01b1-4825-bc54-0e7571315a06", "action": "recovery_rollback_sent"}
+{"txn_id": "c9a73661-e7da-4034-aac8-ef8f6e74af60", "action": "recovery_commit_sent"}
+{"txn_id": "500c579c-9b2b-411c-9969-3304bc965e2f", "action": "recovery_rollback_sent"}
+{"txn_id": "2caf508c-619e-45dc-8e0a-7d906b5683a5", "action": "recovery_rollback_sent"}
+{"txn_id": "346d20ff-7afc-49e7-aaa7-0121e8062693", "action": "start", "amount": 1, "timestamp": 1772750256.4400494}
+{"txn_id": "346d20ff-7afc-49e7-aaa7-0121e8062693", "action": "prepared", "bank": "A", "detail": {"status": "ready"}}
+{"txn_id": "346d20ff-7afc-49e7-aaa7-0121e8062693", "action": "prepared", "bank": "B", "detail": {"status": "ready"}}
+{"txn_id": "f09e46d9-01b1-4825-bc54-0e7571315a06", "action": "recovery_rollback_sent"}
+{"txn_id": "c9a73661-e7da-4034-aac8-ef8f6e74af60", "action": "recovery_commit_sent"}
+{"txn_id": "500c579c-9b2b-411c-9969-3304bc965e2f", "action": "recovery_rollback_sent"}
+{"txn_id": "2caf508c-619e-45dc-8e0a-7d906b5683a5", "action": "recovery_rollback_sent"}
+{"txn_id": "346d20ff-7afc-49e7-aaa7-0121e8062693", "state": "GLOBAL_ABORT", "reason": "recovery_safe_abort"}
+{"txn_id": "346d20ff-7afc-49e7-aaa7-0121e8062693", "action": "recovery_rollback_sent"}
+{"txn_id": "f09e46d9-01b1-4825-bc54-0e7571315a06", "action": "recovery_rollback_sent"}
+{"txn_id": "c9a73661-e7da-4034-aac8-ef8f6e74af60", "action": "recovery_commit_sent"}
+{"txn_id": "500c579c-9b2b-411c-9969-3304bc965e2f", "action": "recovery_rollback_sent"}
+{"txn_id": "2caf508c-619e-45dc-8e0a-7d906b5683a5", "action": "recovery_rollback_sent"}
+{"txn_id": "346d20ff-7afc-49e7-aaa7-0121e8062693", "action": "recovery_rollback_sent"}
+{"txn_id": "f09e46d9-01b1-4825-bc54-0e7571315a06", "action": "recovery_rollback_sent"}
+{"txn_id": "c9a73661-e7da-4034-aac8-ef8f6e74af60", "action": "recovery_commit_sent"}
+{"txn_id": "500c579c-9b2b-411c-9969-3304bc965e2f", "action": "recovery_rollback_sent"}
+{"txn_id": "2caf508c-619e-45dc-8e0a-7d906b5683a5", "action": "recovery_rollback_sent"}
+{"txn_id": "346d20ff-7afc-49e7-aaa7-0121e8062693", "action": "recovery_rollback_sent"}
+{"txn_id": "f09e46d9-01b1-4825-bc54-0e7571315a06", "action": "recovery_rollback_sent"}
+{"txn_id": "c9a73661-e7da-4034-aac8-ef8f6e74af60", "action": "recovery_commit_sent"}
+{"txn_id": "500c579c-9b2b-411c-9969-3304bc965e2f", "action": "recovery_rollback_sent"}
+{"txn_id": "2caf508c-619e-45dc-8e0a-7d906b5683a5", "action": "recovery_rollback_sent"}
+{"txn_id": "346d20ff-7afc-49e7-aaa7-0121e8062693", "action": "recovery_rollback_sent"}
+{"txn_id": "f09e46d9-01b1-4825-bc54-0e7571315a06", "action": "recovery_rollback_sent"}
+{"txn_id": "c9a73661-e7da-4034-aac8-ef8f6e74af60", "action": "recovery_commit_sent"}
+{"txn_id": "500c579c-9b2b-411c-9969-3304bc965e2f", "action": "recovery_rollback_sent"}
+{"txn_id": "2caf508c-619e-45dc-8e0a-7d906b5683a5", "action": "recovery_rollback_sent"}
+{"txn_id": "346d20ff-7afc-49e7-aaa7-0121e8062693", "action": "recovery_rollback_sent"}
+{"txn_id": "f09e46d9-01b1-4825-bc54-0e7571315a06", "action": "recovery_rollback_sent"}
+{"txn_id": "c9a73661-e7da-4034-aac8-ef8f6e74af60", "action": "recovery_commit_sent"}
+{"txn_id": "500c579c-9b2b-411c-9969-3304bc965e2f", "action": "recovery_rollback_sent"}
+{"txn_id": "2caf508c-619e-45dc-8e0a-7d906b5683a5", "action": "recovery_rollback_sent"}
+{"txn_id": "346d20ff-7afc-49e7-aaa7-0121e8062693", "action": "recovery_rollback_sent"}
+{"txn_id": "f09e46d9-01b1-4825-bc54-0e7571315a06", "action": "recovery_rollback_failed", "error": "HTTPConnectionPool(host='localhost', port=5001): Max retries exceeded with url: /rollback (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x76a076d901a0>: Failed to establish a new connection: [Errno 111] Connection refused'))"}
+{"txn_id": "c9a73661-e7da-4034-aac8-ef8f6e74af60", "action": "recovery_commit_failed", "error": "HTTPConnectionPool(host='localhost', port=5001): Max retries exceeded with url: /commit (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x76a076d84f50>: Failed to establish a new connection: [Errno 111] Connection refused'))"}
+{"txn_id": "500c579c-9b2b-411c-9969-3304bc965e2f", "action": "recovery_rollback_failed", "error": "HTTPConnectionPool(host='localhost', port=5001): Max retries exceeded with url: /rollback (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x76a076d85810>: Failed to establish a new connection: [Errno 111] Connection refused'))"}
+{"txn_id": "2caf508c-619e-45dc-8e0a-7d906b5683a5", "action": "recovery_rollback_failed", "error": "HTTPConnectionPool(host='localhost', port=5001): Max retries exceeded with url: /rollback (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x76a076d990f0>: Failed to establish a new connection: [Errno 111] Connection refused'))"}
+{"txn_id": "346d20ff-7afc-49e7-aaa7-0121e8062693", "action": "recovery_rollback_failed", "error": "HTTPConnectionPool(host='localhost', port=5001): Max retries exceeded with url: /rollback (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x76a076d99810>: Failed to establish a new connection: [Errno 111] Connection refused'))"}
+{"txn_id": "f09e46d9-01b1-4825-bc54-0e7571315a06", "action": "recovery_rollback_failed", "error": "HTTPConnectionPool(host='localhost', port=5001): Max retries exceeded with url: /rollback (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x76a076c1bad0>: Failed to establish a new connection: [Errno 111] Connection refused'))"}
+{"txn_id": "c9a73661-e7da-4034-aac8-ef8f6e74af60", "action": "recovery_commit_failed", "error": "HTTPConnectionPool(host='localhost', port=5001): Max retries exceeded with url: /commit (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x76a076da2f10>: Failed to establish a new connection: [Errno 111] Connection refused'))"}
+{"txn_id": "500c579c-9b2b-411c-9969-3304bc965e2f", "action": "recovery_rollback_failed", "error": "HTTPConnectionPool(host='localhost', port=5001): Max retries exceeded with url: /rollback (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x76a076da3680>: Failed to establish a new connection: [Errno 111] Connection refused'))"}
+{"txn_id": "2caf508c-619e-45dc-8e0a-7d906b5683a5", "action": "recovery_rollback_failed", "error": "HTTPConnectionPool(host='localhost', port=5001): Max retries exceeded with url: /rollback (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x76a076da38a0>: Failed to establish a new connection: [Errno 111] Connection refused'))"}
+{"txn_id": "346d20ff-7afc-49e7-aaa7-0121e8062693", "action": "recovery_rollback_failed", "error": "HTTPConnectionPool(host='localhost', port=5001): Max retries exceeded with url: /rollback (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x76a076da3ac0>: Failed to establish a new connection: [Errno 111] Connection refused'))"}
+{"txn_id": "f09e46d9-01b1-4825-bc54-0e7571315a06", "action": "recovery_rollback_sent"}
+{"txn_id": "c9a73661-e7da-4034-aac8-ef8f6e74af60", "action": "recovery_commit_sent"}
+{"txn_id": "500c579c-9b2b-411c-9969-3304bc965e2f", "action": "recovery_rollback_sent"}
+{"txn_id": "2caf508c-619e-45dc-8e0a-7d906b5683a5", "action": "recovery_rollback_sent"}
+{"txn_id": "346d20ff-7afc-49e7-aaa7-0121e8062693", "action": "recovery_rollback_sent"}
+{"txn_id": "f09e46d9-01b1-4825-bc54-0e7571315a06", "action": "recovery_rollback_sent"}
+{"txn_id": "c9a73661-e7da-4034-aac8-ef8f6e74af60", "action": "recovery_commit_sent"}
+{"txn_id": "500c579c-9b2b-411c-9969-3304bc965e2f", "action": "recovery_rollback_sent"}
+{"txn_id": "2caf508c-619e-45dc-8e0a-7d906b5683a5", "action": "recovery_rollback_sent"}
+{"txn_id": "346d20ff-7afc-49e7-aaa7-0121e8062693", "action": "recovery_rollback_sent"}
+{"txn_id": "bf8990b1-4afa-46bb-a0ab-5b8e7e7f302d", "action": "start", "amount": 1, "timestamp": 1772750846.2111073}
+{"txn_id": "bf8990b1-4afa-46bb-a0ab-5b8e7e7f302d", "action": "prepared", "bank": "A", "detail": {"status": "ready"}}
+{"txn_id": "bf8990b1-4afa-46bb-a0ab-5b8e7e7f302d", "action": "prepared", "bank": "B", "detail": {"status": "ready"}}
+{"txn_id": "f09e46d9-01b1-4825-bc54-0e7571315a06", "action": "recovery_rollback_sent"}
+{"txn_id": "c9a73661-e7da-4034-aac8-ef8f6e74af60", "action": "recovery_commit_sent"}
+{"txn_id": "500c579c-9b2b-411c-9969-3304bc965e2f", "action": "recovery_rollback_sent"}
+{"txn_id": "2caf508c-619e-45dc-8e0a-7d906b5683a5", "action": "recovery_rollback_sent"}
+{"txn_id": "346d20ff-7afc-49e7-aaa7-0121e8062693", "action": "recovery_rollback_sent"}
+{"txn_id": "bf8990b1-4afa-46bb-a0ab-5b8e7e7f302d", "state": "GLOBAL_ABORT", "reason": "recovery_safe_abort"}
+{"txn_id": "bf8990b1-4afa-46bb-a0ab-5b8e7e7f302d", "action": "recovery_rollback_sent"}
+{"txn_id": "f09e46d9-01b1-4825-bc54-0e7571315a06", "action": "recovery_rollback_sent"}
+{"txn_id": "c9a73661-e7da-4034-aac8-ef8f6e74af60", "action": "recovery_commit_sent"}
+{"txn_id": "500c579c-9b2b-411c-9969-3304bc965e2f", "action": "recovery_rollback_sent"}
+{"txn_id": "2caf508c-619e-45dc-8e0a-7d906b5683a5", "action": "recovery_rollback_sent"}
+{"txn_id": "346d20ff-7afc-49e7-aaa7-0121e8062693", "action": "recovery_rollback_sent"}
+{"txn_id": "bf8990b1-4afa-46bb-a0ab-5b8e7e7f302d", "action": "recovery_rollback_sent"}
+{"txn_id": "f09e46d9-01b1-4825-bc54-0e7571315a06", "action": "recovery_rollback_sent"}
+{"txn_id": "c9a73661-e7da-4034-aac8-ef8f6e74af60", "action": "recovery_commit_sent"}
+{"txn_id": "500c579c-9b2b-411c-9969-3304bc965e2f", "action": "recovery_rollback_sent"}
+{"txn_id": "2caf508c-619e-45dc-8e0a-7d906b5683a5", "action": "recovery_rollback_sent"}
+{"txn_id": "346d20ff-7afc-49e7-aaa7-0121e8062693", "action": "recovery_rollback_sent"}
+{"txn_id": "bf8990b1-4afa-46bb-a0ab-5b8e7e7f302d", "action": "recovery_rollback_sent"}
+{"txn_id": "4e755f08-0d9f-4ba7-b101-f18337a39450", "action": "start", "amount": 1, "timestamp": 1772750943.4406095}
+{"txn_id": "4e755f08-0d9f-4ba7-b101-f18337a39450", "action": "prepared", "bank": "A", "detail": {"status": "ready"}}
+{"txn_id": "4e755f08-0d9f-4ba7-b101-f18337a39450", "action": "prepared", "bank": "B", "detail": {"status": "ready"}}
+{"txn_id": "f09e46d9-01b1-4825-bc54-0e7571315a06", "action": "recovery_rollback_sent"}
+{"txn_id": "c9a73661-e7da-4034-aac8-ef8f6e74af60", "action": "recovery_commit_sent"}
+{"txn_id": "500c579c-9b2b-411c-9969-3304bc965e2f", "action": "recovery_rollback_sent"}
+{"txn_id": "2caf508c-619e-45dc-8e0a-7d906b5683a5", "action": "recovery_rollback_sent"}
+{"txn_id": "346d20ff-7afc-49e7-aaa7-0121e8062693", "action": "recovery_rollback_sent"}
+{"txn_id": "bf8990b1-4afa-46bb-a0ab-5b8e7e7f302d", "action": "recovery_rollback_sent"}
+{"txn_id": "4e755f08-0d9f-4ba7-b101-f18337a39450", "state": "GLOBAL_ABORT", "reason": "recovery_safe_abort"}
+{"txn_id": "4e755f08-0d9f-4ba7-b101-f18337a39450", "action": "recovery_rollback_sent"}
+{"txn_id": "f09e46d9-01b1-4825-bc54-0e7571315a06", "action": "recovery_rollback_sent"}
+{"txn_id": "c9a73661-e7da-4034-aac8-ef8f6e74af60", "action": "recovery_commit_sent"}
+{"txn_id": "500c579c-9b2b-411c-9969-3304bc965e2f", "action": "recovery_rollback_sent"}
+{"txn_id": "2caf508c-619e-45dc-8e0a-7d906b5683a5", "action": "recovery_rollback_sent"}
+{"txn_id": "346d20ff-7afc-49e7-aaa7-0121e8062693", "action": "recovery_rollback_sent"}
+{"txn_id": "bf8990b1-4afa-46bb-a0ab-5b8e7e7f302d", "action": "recovery_rollback_sent"}
+{"txn_id": "4e755f08-0d9f-4ba7-b101-f18337a39450", "action": "recovery_rollback_sent"}
+{"txn_id": "f09e46d9-01b1-4825-bc54-0e7571315a06", "action": "recovery_rollback_sent"}
+{"txn_id": "c9a73661-e7da-4034-aac8-ef8f6e74af60", "action": "recovery_commit_sent"}
+{"txn_id": "500c579c-9b2b-411c-9969-3304bc965e2f", "action": "recovery_rollback_sent"}
+{"txn_id": "2caf508c-619e-45dc-8e0a-7d906b5683a5", "action": "recovery_rollback_sent"}
+{"txn_id": "346d20ff-7afc-49e7-aaa7-0121e8062693", "action": "recovery_rollback_sent"}
+{"txn_id": "bf8990b1-4afa-46bb-a0ab-5b8e7e7f302d", "action": "recovery_rollback_sent"}
+{"txn_id": "4e755f08-0d9f-4ba7-b101-f18337a39450", "action": "recovery_rollback_sent"}
+{"txn_id": "05c1fef4-6c64-44b0-97ce-13f6aca8ffa1", "action": "start", "from": "A1001", "to": "B2001", "amount": 200}
+{"txn_id": "05c1fef4-6c64-44b0-97ce-13f6aca8ffa1", "state": "GLOBAL_ABORT", "reason": "prepare failed or commit failed"}
+{"txn_id": "52ff3b59-6bd5-4f58-a75a-728d62acdb5c", "action": "start", "from": "A1005", "to": "B1005", "amount": 100}
+{"txn_id": "52ff3b59-6bd5-4f58-a75a-728d62acdb5c", "state": "GLOBAL_COMMIT"}
+{"txn_id": "11616b6c-87e2-4673-a74b-24b8d8b8a7c3", "action": "start", "from": "A1005", "to": "B1005", "amount": 100}
+{"txn_id": "11616b6c-87e2-4673-a74b-24b8d8b8a7c3", "state": "GLOBAL_COMMIT"}
+{"txn_id": "c662a640-9702-4a11-b6aa-fa75b4e67dbf", "action": "start", "from": "A1005", "to": "B1005", "amount": 100}
+{"txn_id": "c662a640-9702-4a11-b6aa-fa75b4e67dbf", "state": "GLOBAL_COMMIT"}
+{"txn_id": "bdb9a55e-752d-4b07-aa70-99bf529025a5", "action": "start", "from": "A1005", "to": "B1005", "amount": 100}
+{"txn_id": "bdb9a55e-752d-4b07-aa70-99bf529025a5", "state": "GLOBAL_COMMIT"}
+{"txn_id": "622e3ecf-1adb-4e45-a89e-3c1a7fe53e48", "action": "start", "from": "A1005", "to": "B1005", "amount": 100}
+{"txn_id": "622e3ecf-1adb-4e45-a89e-3c1a7fe53e48", "state": "GLOBAL_COMMIT"}
+{"txn_id": "ec306fe8-5c0e-4cdb-ae7b-3dc4cee8b724", "action": "start", "from": "A1005", "to": "B1005", "amount": 100}
+{"txn_id": "ec306fe8-5c0e-4cdb-ae7b-3dc4cee8b724", "state": "GLOBAL_COMMIT"}
+{"txn_id": "d2a9e510-63ae-4bf5-90d5-1aebbd685547", "action": "start", "from": "A1005", "to": "B1005", "amount": 100}
+{"txn_id": "d2a9e510-63ae-4bf5-90d5-1aebbd685547", "state": "GLOBAL_COMMIT"}
+{"txn_id": "d2a9e510-63ae-4bf5-90d5-1aebbd685547", "state": "error", "reason": "HTTPConnectionPool(host='localhost', port=5002): Max retries exceeded with url: /commit (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7ecc886b7350>: Failed to establish a new connection: [Errno 111] Connection refused'))"}
+{"txn_id": "113cf68e-4d2a-4d64-88ea-4430cd8705d9", "action": "start", "from": "A1005", "to": "B1005", "amount": 100}
+{"txn_id": "113cf68e-4d2a-4d64-88ea-4430cd8705d9", "state": "GLOBAL_COMMIT"}
+{"txn_id": "0d7e42b6-5082-4abb-a2b6-7b123cc5d4e3", "action": "start", "from": "A1005", "to": "B1005", "amount": 100}
+{"txn_id": "0d7e42b6-5082-4abb-a2b6-7b123cc5d4e3", "state": "GLOBAL_COMMIT"}
+{"txn_id": "0d7e42b6-5082-4abb-a2b6-7b123cc5d4e3", "state": "error", "reason": "HTTPConnectionPool(host='localhost', port=5001): Max retries exceeded with url: /commit (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7ecc886b7bd0>: Failed to establish a new connection: [Errno 111] Connection refused'))"}
