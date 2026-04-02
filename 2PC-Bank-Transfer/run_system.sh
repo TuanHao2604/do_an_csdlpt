@@ -1,15 +1,12 @@
 #!/bin/bash
-"""
-Script để chạy toàn bộ hệ thống 2PC
-Run all 2PC services
-"""
+# Script để chạy toàn bộ hệ thống 2PC Bank Transfer
 
 echo "🚀 Starting 2PC Bank Transfer System"
 echo "===================================="
 
 # Function to check if port is in use
 check_port() {
-    if lsof -Pi :$1 -sTCP:LISTEN -t >/dev/null ; then
+    if lsof -Pi :$1 -sTCP:LISTEN -t >/dev/null 2>&1; then
         echo "❌ Port $1 is already in use"
         return 1
     else
@@ -18,12 +15,24 @@ check_port() {
     fi
 }
 
+# Kill old processes on these ports
+echo "Cleaning up old processes..."
+for port in 5000 5001 5002; do
+    pid=$(lsof -ti:$port 2>/dev/null)
+    if [ -n "$pid" ]; then
+        kill $pid 2>/dev/null
+        echo "  Killed process on port $port (PID: $pid)"
+    fi
+done
+sleep 1
+
 # Check ports
+echo ""
 echo "Checking ports..."
 check_port 5000 && check_port 5001 && check_port 5002
 
 if [ $? -ne 0 ]; then
-    echo "Some ports are in use. Please stop other services first."
+    echo "Some ports are still in use. Please stop other services first."
     exit 1
 fi
 
@@ -43,13 +52,17 @@ BANKB_PID=$!
 
 echo ""
 echo "Services started!"
-echo "Coordinator PID: $COORDINATOR_PID"
-echo "Bank A PID: $BANKA_PID"
-echo "Bank B PID: $BANKB_PID"
+echo "  Coordinator PID: $COORDINATOR_PID (port 5000)"
+echo "  Bank A PID: $BANKA_PID (port 5001)"
+echo "  Bank B PID: $BANKB_PID (port 5002)"
 echo ""
-echo "Test with: python3 test_flask_system.py"
+echo "Frontend:"
+echo "  NovaBank A: cd ../novabank && npm run dev  (port 3000)"
+echo "  NovaBank B: cd ../novabank_b && npm run dev (port 3001)"
 echo ""
-echo "Stop with: kill $COORDINATOR_PID $BANKA_PID $BANKB_PID"
+echo "Test: python3 test_2pc_full.py"
+echo ""
+echo "Stop: kill $COORDINATOR_PID $BANKA_PID $BANKB_PID"
 echo ""
 echo "Press Ctrl+C to stop all services..."
 

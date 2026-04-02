@@ -1,0 +1,5 @@
+{
+  "name": "NovaBank",
+  "description": "Ứng dụng giao dịch ngân hàng trực tuyến với các chức năng đăng nhập, xem số dư, chuyển tiền và lịch sử giao dịch.",
+  "requestFramePermissions": []
+}

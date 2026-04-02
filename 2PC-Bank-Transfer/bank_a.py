@@ -1,5 +1,6 @@
 import pyodbc
 from flask import Flask, request, jsonify, session
+from flask_cors import CORS
 import os
 import uuid
 import hashlib
@@ -8,9 +9,10 @@ from functools import wraps
 from logger import get_logger, log_event
 
 app = Flask(__name__)
-app.secret_key = 'supersecretkey'  # dùng cho session (hoặc JWT)
+app.secret_key = 'supersecretkey'
+CORS(app, supports_credentials=True)
 
-# Cấu hình SQL Server (điều chỉnh nếu cần)
+# Cấu hình SQL Server
 SERVER = 'localhost,1433'
 DATABASE = 'bank_a'
 USERNAME = 'sa'
@@ -26,9 +28,7 @@ def get_db_connection():
     try:
         return pyodbc.connect(CONNECTION_STRING)
     except pyodbc.ProgrammingError as e:
-        # SQL Server error 4060: database does not exist
         if 'Cannot open database' in str(e):
-            # Create the database using master
             master_cnxn = pyodbc.connect(
                 f'DRIVER={DRIVER};SERVER={SERVER};DATABASE=master;UID={USERNAME};PWD={PASSWORD};TrustServerCertificate=yes'
             )
@@ -45,19 +45,17 @@ def hash_password(password):
 def login_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        # Đơn giản: kiểm tra session (hoặc token)
         if 'user_id' not in session:
             return jsonify({"error": "Unauthorized"}), 401
         return f(*args, **kwargs)
     return decorated
 
-# --- Khởi tạo database (chạy một lần) ---
+# --- Khởi tạo database ---
 def init_db():
     """Tạo schema và dữ liệu mẫu cho Bank A."""
     conn = get_db_connection()
     cursor = conn.cursor()
     try:
-        # Tạo bảng nếu chưa tồn tại
         cursor.execute("""
             IF OBJECT_ID('dbo.customers','U') IS NULL
             CREATE TABLE dbo.customers (
@@ -102,7 +100,7 @@ def init_db():
             )
         """)
 
-        # Seed dữ liệu mẫu nếu chưa có
+        # Seed dữ liệu mẫu
         cursor.execute("SELECT COUNT(*) FROM dbo.customers")
         if cursor.fetchone()[0] == 0:
             cursor.execute("INSERT INTO dbo.customers (username, password, full_name, email, phone) VALUES (?, ?, ?, ?, ?)",
@@ -128,7 +126,7 @@ def init_db():
     finally:
         conn.close()
 
-# --- Endpoint đăng nhập ---
+# --- Auth ---
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -139,12 +137,30 @@ def login():
 
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT id, password FROM customers WHERE username = ?", (username,))
+    cursor.execute("SELECT id, password, full_name FROM customers WHERE username = ?", (username,))
     row = cursor.fetchone()
     conn.close()
     if row and row.password == hash_password(password):
         session['user_id'] = row.id
-        return jsonify({"status": "success", "message": "Logged in"})
+        # Lấy danh sách tài khoản
+        conn2 = get_db_connection()
+        c2 = conn2.cursor()
+        c2.execute("SELECT account_number, balance, currency FROM accounts WHERE customer_id = ?", (row.id,))
+        accounts = []
+        for r in c2.fetchall():
+            accounts.append({
+                "account_number": r.account_number,
+                "balance": float(r.balance),
+                "currency": r.currency
+            })
+        conn2.close()
+        return jsonify({
+            "status": "success",
+            "message": "Logged in",
+            "user_id": row.id,
+            "full_name": row.full_name,
+            "accounts": accounts
+        })
     return jsonify({"error": "Invalid credentials"}), 401
 
 @app.route('/logout', methods=['POST'])
@@ -152,8 +168,7 @@ def logout():
     session.clear()
     return jsonify({"status": "success"})
 
-
-# --- Đăng ký tài khoản ---
+# --- Đăng ký ---
 @app.route('/register', methods=['POST'])
 def register():
     data = request.get_json() or {}
@@ -179,7 +194,6 @@ def register():
         if cursor.fetchone():
             return jsonify({"error": "Account number already exists"}), 400
 
-        # Use OUTPUT clause to get the inserted customer ID
         cursor.execute("""
             INSERT INTO customers (username, password, full_name, email, phone) 
             OUTPUT INSERTED.id
@@ -200,9 +214,29 @@ def register():
         conn.close()
 
 
-# --- Lấy thông tin tài khoản ---
+# --- Public Endpoints (dùng cho frontend) ---
+@app.route('/accounts', methods=['GET'])
+def list_accounts():
+    """Liệt kê tất cả tài khoản (public cho demo)."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT a.account_number, a.balance, a.currency, c.full_name
+        FROM accounts a JOIN customers c ON a.customer_id = c.id
+    """)
+    accounts = []
+    for row in cursor.fetchall():
+        accounts.append({
+            "account_number": row.account_number,
+            "balance": float(row.balance),
+            "currency": row.currency,
+            "full_name": row.full_name
+        })
+    conn.close()
+    return jsonify({"accounts": accounts, "bank": "Bank A"})
+
+
 @app.route('/accounts/<account_number>/info', methods=['GET'])
-@login_required
 def account_info(account_number):
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -226,7 +260,6 @@ def account_info(account_number):
     return jsonify({"error": "Account not found"}), 404
 
 @app.route('/accounts/<account_number>/balance', methods=['GET'])
-@login_required
 def balance(account_number):
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -237,9 +270,35 @@ def balance(account_number):
         return jsonify({"account_number": account_number, "balance": float(row.balance)})
     return jsonify({"error": "Account not found"}), 404
 
-# --- Rút tiền (nội bộ) ---
+
+@app.route('/transactions/<account_number>', methods=['GET'])
+def get_transactions(account_number):
+    """Lấy lịch sử giao dịch của tài khoản."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT id, account_number, type, amount, counterpart, status, created_at
+        FROM transactions
+        WHERE account_number = ?
+        ORDER BY created_at DESC
+    """, (account_number,))
+    txns = []
+    for row in cursor.fetchall():
+        txns.append({
+            "id": row.id,
+            "account_number": row.account_number,
+            "type": row.type,
+            "amount": float(row.amount),
+            "counterpart": row.counterpart,
+            "status": row.status,
+            "created_at": str(row.created_at)
+        })
+    conn.close()
+    return jsonify({"transactions": txns})
+
+
+# --- Rút tiền ---
 @app.route('/withdraw', methods=['POST'])
-@login_required
 def withdraw():
     data = request.get_json()
     account_number = data.get('account_number')
@@ -254,26 +313,24 @@ def withdraw():
         row = cursor.fetchone()
         if not row:
             return jsonify({"error": "Account not found"}), 404
-        balance = row.balance
-        if balance < amount:
+        bal = row.balance
+        if bal < amount:
             return jsonify({"error": "Insufficient balance"}), 400
 
-        # Trừ tiền
         cursor.execute("UPDATE accounts SET balance = balance - ? WHERE account_number = ?", (amount, account_number))
-        # Ghi log transaction
         cursor.execute("""
             INSERT INTO transactions (account_number, type, amount, counterpart, status, created_at)
             VALUES (?, 'withdraw', ?, NULL, 'success', GETDATE())
         """, (account_number, amount))
         conn.commit()
-        return jsonify({"status": "success", "new_balance": float(balance - amount)})
+        return jsonify({"status": "success", "new_balance": float(bal - amount)})
     except Exception as e:
         conn.rollback()
         return jsonify({"error": str(e)}), 500
     finally:
         conn.close()
 
-# --- Chuyển tiền nội bộ (cùng ngân hàng) ---
+# --- Chuyển tiền nội bộ ---
 @app.route('/internal/transfer', methods=['POST'])
 def internal_transfer():
     data = request.get_json()
@@ -288,7 +345,6 @@ def internal_transfer():
     conn = get_db_connection()
     cursor = conn.cursor()
     try:
-        # Kiểm tra số dư
         cursor.execute("SELECT balance FROM accounts WHERE account_number = ?", (from_acc,))
         row = cursor.fetchone()
         if not row:
@@ -296,16 +352,13 @@ def internal_transfer():
         if row.balance < amount:
             return jsonify({"error": "Insufficient balance"}), 400
 
-        # Kiểm tra tài khoản đích tồn tại
         cursor.execute("SELECT account_number FROM accounts WHERE account_number = ?", (to_acc,))
         if not cursor.fetchone():
             return jsonify({"error": "Destination account not found"}), 404
 
-        # Thực hiện chuyển
         cursor.execute("UPDATE accounts SET balance = balance - ? WHERE account_number = ?", (amount, from_acc))
         cursor.execute("UPDATE accounts SET balance = balance + ? WHERE account_number = ?", (amount, to_acc))
 
-        # Ghi log
         cursor.execute("""
             INSERT INTO transactions (account_number, type, amount, counterpart, status, created_at)
             VALUES (?, 'transfer_out', ?, ?, 'success', GETDATE())
@@ -323,7 +376,7 @@ def internal_transfer():
     finally:
         conn.close()
 
-# --- Endpoint 2PC (prepare, commit, rollback) cần điều chỉnh để nhận thêm thông tin tài khoản ---
+# --- 2PC Endpoints ---
 @app.route('/prepare', methods=['POST'])
 def prepare():
     data = request.get_json() or {}
@@ -331,7 +384,7 @@ def prepare():
     source_account = data.get('source_account')
     dest_account = data.get('dest_account')
     amount = data.get('amount')
-    txn_type = data.get('type')  # 'debit' hoặc 'credit'
+    txn_type = data.get('type')
 
     if not txn_id or not amount or not txn_type:
         return jsonify({"status": "abort", "reason": "Missing required fields"}), 400
@@ -346,6 +399,15 @@ def prepare():
                 return jsonify({"status": "abort", "reason": "Source account not found"})
             if row.balance < amount:
                 return jsonify({"status": "abort", "reason": "Insufficient balance"})
+            
+            # Trừ tiền để "hold" lại (giữ chỗ)
+            cursor.execute("UPDATE accounts SET balance = balance - ? WHERE account_number = ?", (amount, source_account))
+            # Ghi nhận giao dịch trừ tiền ngay lúc này để lịch sử khớp
+            cursor.execute(
+                "INSERT INTO transactions (account_number, type, amount, counterpart, status, created_at) VALUES (?, 'transfer_out', ?, ?, 'success', GETDATE())",
+                (source_account, amount, dest_account)
+            )
+
             cursor.execute(
                 "INSERT INTO pending_txns (txn_id, source_account, dest_account, amount, type) VALUES (?, ?, ?, ?, ?)",
                 (txn_id, source_account, dest_account, amount, 'debit')
@@ -362,6 +424,7 @@ def prepare():
             return jsonify({"status": "abort", "reason": "Unknown transaction type"}), 400
 
         conn.commit()
+        log_event('bank_a', {'txn_id': txn_id, 'action': 'prepare', 'type': txn_type, 'status': 'ready'})
         return jsonify({"status": "ready"})
     except Exception as e:
         conn.rollback()
@@ -390,15 +453,9 @@ def commit():
         source_account, dest_account, amount, txn_type = row
 
         if txn_type == 'debit':
-            cursor.execute(
-                "UPDATE accounts SET balance = balance - ? WHERE account_number = ?",
-                (amount, source_account)
-            )
-            cursor.execute(
-                "INSERT INTO transactions (account_number, type, amount, counterpart, status, created_at) VALUES (?, 'transfer_out', ?, ?, 'success', GETDATE())",
-                (source_account, amount, dest_account)
-            )
-        else:  # credit
+            # Balance và log giao dịch đã trừ lúc prepare, không cần làm gì thêm ở đây
+            pass
+        else:
             cursor.execute(
                 "UPDATE accounts SET balance = balance + ? WHERE account_number = ?",
                 (amount, dest_account)
@@ -410,6 +467,7 @@ def commit():
 
         cursor.execute("DELETE FROM pending_txns WHERE txn_id = ?", (txn_id,))
         conn.commit()
+        log_event('bank_a', {'txn_id': txn_id, 'action': 'commit', 'status': 'committed'})
         return jsonify({"status": "committed"})
     except Exception as e:
         conn.rollback()
@@ -425,8 +483,22 @@ def rollback():
     conn = get_db_connection()
     cursor = conn.cursor()
     try:
+        cursor.execute("SELECT source_account, dest_account, amount, type FROM pending_txns WHERE txn_id = ?", (txn_id,))
+        row = cursor.fetchone()
+        if row:
+            source_account, dest_account, amount, txn_type = row
+            if txn_type == 'debit':
+                # Hoàn lại tiền vì giao dịch bị hủy
+                cursor.execute("UPDATE accounts SET balance = balance + ? WHERE account_number = ?", (amount, source_account))
+                # Ghi log hoàn tiền
+                cursor.execute(
+                    "INSERT INTO transactions (account_number, type, amount, counterpart, status, created_at) VALUES (?, 'refund_in', ?, ?, 'success', GETDATE())",
+                    (source_account, amount, dest_account)
+                )
+
         cursor.execute("DELETE FROM pending_txns WHERE txn_id = ?", (txn_id,))
         conn.commit()
+        log_event('bank_a', {'txn_id': txn_id, 'action': 'rollback', 'status': 'rolled_back'})
         return jsonify({"status": "rolled_back"})
     except Exception as e:
         conn.rollback()
@@ -434,29 +506,60 @@ def rollback():
     finally:
         conn.close()
 
-# --- Recovery cho bank (khi khởi động) ---
+# --- Pending transactions (for recovery) ---
+@app.route('/pending', methods=['GET'])
+def list_pending():
+    """Liệt kê các giao dịch đang treo (cho recovery)."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT txn_id, source_account, dest_account, amount, type, created_at FROM pending_txns")
+    rows = cursor.fetchall()
+    conn.close()
+    result = []
+    for r in rows:
+        result.append({
+            "txn_id": r.txn_id,
+            "source_account": r.source_account,
+            "dest_account": r.dest_account,
+            "amount": float(r.amount),
+            "type": r.type,
+            "created_at": str(r.created_at)
+        })
+    return jsonify({"pending": result})
+
+# --- Recovery ---
 def recover_pending():
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT txn_id FROM pending_txns")
+    cursor.execute("SELECT txn_id, source_account, dest_account, amount, type FROM pending_txns")
     rows = cursor.fetchall()
-    for (txn_id,) in rows:
-        # Gọi coordinator để hỏi trạng thái
+    for row in rows:
+        txn_id, source_account, dest_account, amount, txn_type = row
         try:
             resp = requests.get(f"http://localhost:5000/status/{txn_id}", timeout=5)
+            state = 'unknown'
             if resp.status_code == 200:
                 state = resp.json().get('status')
-                if state == 'committed':
-                    # Cần commit lại? Nhưng ở đây ta chưa có thông tin amount, type.
-                    # Thực tế nên lưu thêm trong pending_txns đủ thông tin để tự commit.
-                    # Tạm thời ta chỉ xóa pending (vì commit sẽ được thực hiện lại từ coordinator)
-                    cursor.execute("DELETE FROM pending_txns WHERE txn_id = ?", (txn_id,))
-                    conn.commit()
-                elif state == 'aborted':
-                    cursor.execute("DELETE FROM pending_txns WHERE txn_id = ?", (txn_id,))
-                    conn.commit()
-        except:
-            pass
+            elif resp.status_code == 404:
+                # Nếu Coordinator không biết giao dịch này, tức là nó đã bị hủy từ trong trứng nước
+                state = 'aborted'
+            
+            if state == 'committed':
+                if txn_type == 'credit':
+                    cursor.execute("UPDATE accounts SET balance = balance + ? WHERE account_number = ?", (amount, dest_account))
+                    cursor.execute("INSERT INTO transactions (account_number, type, amount, counterpart, status, created_at) VALUES (?, 'transfer_in', ?, ?, 'success', GETDATE())", (dest_account, amount, source_account))
+                cursor.execute("DELETE FROM pending_txns WHERE txn_id = ?", (txn_id,))
+                conn.commit()
+                log_event('bank_a', {'txn_id': txn_id, 'action': 'recover_commit', 'status': 'completed'})
+            elif state in ('aborted', 'error'):
+                if txn_type == 'debit':
+                    cursor.execute("UPDATE accounts SET balance = balance + ? WHERE account_number = ?", (amount, source_account))
+                    cursor.execute("INSERT INTO transactions (account_number, type, amount, counterpart, status, created_at) VALUES (?, 'refund_in', ?, ?, 'success', GETDATE())", (source_account, amount, dest_account))
+                cursor.execute("DELETE FROM pending_txns WHERE txn_id = ?", (txn_id,))
+                conn.commit()
+                log_event('bank_a', {'txn_id': txn_id, 'action': 'recover_rollback', 'status': 'completed'})
+        except Exception as e:
+            logger.error(f"Recovery error for {txn_id}: {e}")
     conn.close()
 
 
@@ -474,6 +577,5 @@ def health_check():
 
 if __name__ == '__main__':
     init_db()
-    # Phục hồi các giao dịch treo
     recover_pending()
     app.run(port=5001, debug=True)

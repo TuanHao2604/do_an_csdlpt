@@ -1,9 +1,10 @@
-"""
-Requirements for 2PC Bank Transfer with Flask Services
-"""
+# Requirements for 2PC Bank Transfer with Flask Services
 
 # Web Framework
 Flask==2.3.3
+
+# CORS support
+flask-cors==4.0.0
 
 # HTTP requests
 requests==2.31.0
