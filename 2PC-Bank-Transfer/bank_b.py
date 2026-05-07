@@ -2,6 +2,7 @@
 import psycopg2
 from flask import Flask, request, jsonify, session
 from flask_cors import CORS
+import os
 import hashlib
 from functools import wraps
 from logger import get_logger, log_event
@@ -11,11 +12,11 @@ app.secret_key = 'anothersecretkey'
 CORS(app, supports_credentials=True)
 
 DB_CONFIG = {
-    'dbname': 'bank_b',
-    'user': 'postgres',
-    'password': 'Hao@DBMS2026',
-    'host': 'localhost',
-    'port': 15432
+    'dbname': os.environ.get('PG_DATABASE', 'bank_b'),
+    'user': os.environ.get('PG_USER', 'postgres'),
+    'password': os.environ.get('PG_PASSWORD', 'Hao@DBMS2026'),
+    'host': os.environ.get('PG_HOST', 'localhost'),
+    'port': int(os.environ.get('PG_PORT', '15432'))
 }
 
 logger = get_logger('bank_b')
@@ -552,7 +553,8 @@ def recover_pending():
     for row in rows:
         txn_id, source_account, dest_account, amount, txn_type = row
         try:
-            resp = requests.get(f"http://localhost:5000/status/{txn_id}", timeout=5)
+            coordinator_url = os.environ.get('COORDINATOR_URL', 'http://localhost:5000')
+            resp = requests.get(f"{coordinator_url}/status/{txn_id}", timeout=5)
             state = 'unknown'
             if resp.status_code == 200:
                 state = resp.json().get('status')
@@ -581,4 +583,4 @@ def recover_pending():
 if __name__ == '__main__':
     init_db()
     recover_pending()
-    app.run(port=5002, debug=False)
+    app.run(host='0.0.0.0', port=5002, debug=False)

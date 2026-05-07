@@ -13,7 +13,7 @@ requests==2.31.0
 psycopg2-binary==2.9.9
 
 # SQL Server
-pyodbc==4.0.39
+pyodbc==5.2.0
 
 # MySQL (optional)
 PyMySQL==1.1.0

@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+*.pyo
+logs/
+*.log
+.git/
+.gitignore
+README.md
+QUICKSTART.md
+SETUP.md

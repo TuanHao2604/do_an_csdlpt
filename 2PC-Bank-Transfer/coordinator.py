@@ -6,15 +6,16 @@ import requests
 import time
 import threading
 import json
+import os
 from logger import get_logger, log_event
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
 logger = get_logger('coordinator')
 
-# Các URL của các dịch vụ bank
-BANK_A_URL = 'http://localhost:5001'
-BANK_B_URL = 'http://localhost:5002'
+# Các URL của các dịch vụ bank (đọc từ biến môi trường, fallback về giá trị mặc định)
+BANK_A_URL = os.environ.get('BANK_A_URL', 'http://localhost:5001')
+BANK_B_URL = os.environ.get('BANK_B_URL', 'http://localhost:5002')
 
 # Trạng thái giao dịch (in-memory)
 txn_status = {}
@@ -335,4 +336,4 @@ if __name__ == '__main__':
     recovery_thread.start()
     logger.info("Recovery worker thread started")
 
-    app.run(port=5000, debug=True, use_reloader=False)
+    app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=False)

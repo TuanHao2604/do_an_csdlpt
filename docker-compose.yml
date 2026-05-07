@@ -1,0 +1,139 @@
+services:
+  # ==================== DATABASES ====================
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: novabank-sqlserver
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: ${SA_PASSWORD:-Hao@DBMS2026}
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    healthcheck:
+      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$${MSSQL_SA_PASSWORD}" -C -Q "SELECT 1" || exit 1
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+    networks:
+      - novabank-net
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: novabank-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-Hao@DBMS2026}
+      POSTGRES_DB: bank_b
+    ports:
+      - "15432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - novabank-net
+
+  # ==================== BACKEND SERVICES ====================
+  coordinator:
+    build:
+      context: ./2PC-Bank-Transfer
+      dockerfile: Dockerfile
+    container_name: novabank-coordinator
+    command: python coordinator.py
+    environment:
+      BANK_A_URL: http://bank-a:5001
+      BANK_B_URL: http://bank-b:5002
+    ports:
+      - "5000:5000"
+    depends_on:
+      bank-a:
+        condition: service_started
+      bank-b:
+        condition: service_started
+    networks:
+      - novabank-net
+
+  bank-a:
+    build:
+      context: ./2PC-Bank-Transfer
+      dockerfile: Dockerfile
+    container_name: novabank-bank-a
+    command: python bank_a.py
+    environment:
+      MSSQL_SERVER: "sqlserver,1433"
+      MSSQL_DATABASE: bank_a
+      MSSQL_USERNAME: sa
+      MSSQL_PASSWORD: ${SA_PASSWORD:-Hao@DBMS2026}
+      COORDINATOR_URL: http://coordinator:5000
+    ports:
+      - "5001:5001"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - novabank-net
+
+  bank-b:
+    build:
+      context: ./2PC-Bank-Transfer
+      dockerfile: Dockerfile
+    container_name: novabank-bank-b
+    command: python bank_b.py
+    environment:
+      PG_HOST: postgres
+      PG_PORT: "5432"
+      PG_DATABASE: bank_b
+      PG_USER: postgres
+      PG_PASSWORD: ${POSTGRES_PASSWORD:-Hao@DBMS2026}
+      COORDINATOR_URL: http://coordinator:5000
+    ports:
+      - "5002:5002"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - novabank-net
+
+  # ==================== FRONTEND APPS ====================
+  novabank:
+    build:
+      context: ./novabank
+      dockerfile: Dockerfile
+    container_name: novabank-frontend-a
+    ports:
+      - "3000:3000"
+    depends_on:
+      - bank-a
+      - coordinator
+    networks:
+      - novabank-net
+
+  novabank-b:
+    build:
+      context: ./novabank_b
+      dockerfile: Dockerfile
+    container_name: novabank-frontend-b
+    ports:
+      - "3001:3001"
+    depends_on:
+      - bank-b
+      - coordinator
+    networks:
+      - novabank-net
+
+# ==================== INFRASTRUCTURE ====================
+volumes:
+  sqlserver_data:
+    driver: local
+  postgres_data:
+    driver: local
+
+networks:
+  novabank-net:
+    driver: bridge

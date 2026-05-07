@@ -12,11 +12,11 @@ app = Flask(__name__)
 app.secret_key = 'supersecretkey'
 CORS(app, supports_credentials=True)
 
-# Cấu hình SQL Server
-SERVER = 'localhost,1433'
-DATABASE = 'bank_a'
-USERNAME = 'sa'
-PASSWORD = 'Hao@DBMS2026'
+# Cấu hình SQL Server (đọc từ biến môi trường, fallback về giá trị mặc định)
+SERVER = os.environ.get('MSSQL_SERVER', 'localhost,1433')
+DATABASE = os.environ.get('MSSQL_DATABASE', 'bank_a')
+USERNAME = os.environ.get('MSSQL_USERNAME', 'sa')
+PASSWORD = os.environ.get('MSSQL_PASSWORD', 'Hao@DBMS2026')
 DRIVER = '{ODBC Driver 18 for SQL Server}'
 CONNECTION_STRING = f'DRIVER={DRIVER};SERVER={SERVER};DATABASE={DATABASE};UID={USERNAME};PWD={PASSWORD};TrustServerCertificate=yes'
 
@@ -536,7 +536,8 @@ def recover_pending():
     for row in rows:
         txn_id, source_account, dest_account, amount, txn_type = row
         try:
-            resp = requests.get(f"http://localhost:5000/status/{txn_id}", timeout=5)
+            coordinator_url = os.environ.get('COORDINATOR_URL', 'http://localhost:5000')
+            resp = requests.get(f"{coordinator_url}/status/{txn_id}", timeout=5)
             state = 'unknown'
             if resp.status_code == 200:
                 state = resp.json().get('status')
@@ -578,4 +579,4 @@ def health_check():
 if __name__ == '__main__':
     init_db()
     recover_pending()
-    app.run(port=5001, debug=True)
+    app.run(host='0.0.0.0', port=5001, debug=True)
